@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>城市联动</title>
+</head>
+<body>
+    <center>
+        <h2>城市联动</h2>
+    </center>
+
+    <select></select>
+
+    <script type="text/javascript" src="/static/js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript">
+        $.get('{% url "getcitys" %}',{upid:0},function(data){
+            str=''
+            for (var i=0;i<data.length;i++){
+                console.log(i)
+                str+='<option value="'+data[i].id+'">'+data[i].name+'</option>'
+            }
+            $('select:eq(0)').html(str)
+        },'json')
+
+        // 绑定 change 事件
+        $('select').live('click',function(){
+            $(this).nextAll().remove()
+
+            id=$(this).val()
+
+            $.get('{% url "getcitys" %}',{upid:id},function(data){
+                // 判断当前返回的数据如果为空,则不在继续执行
+                if(data.length == 0){return}
+
+                // 把获取到的城市信息,组装成 下拉选项
+                str = ''
+                for (var i = 0; i < data.length; i++) {
+                    str+= '<option value="'+data[i].id+'">'+data[i].name+'</option>'
+                }
+                // 动态创建select下拉框
+                s = $('<select></select>')
+                s.html(str)
+                $('body').append(s)
+
+            },'json')
+        })
+    </script>
+
+</body>
+</html>
